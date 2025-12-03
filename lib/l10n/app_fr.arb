@@ -1,0 +1,24 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Chat IA",
+  "inputPlaceholder": "Que voulez-vous savoir ?",
+  "sendMessage": "Envoyer le message",
+  "sending": "Envoi en cours…",
+  "stopGeneration": "Arrêter la génération",
+  "retry": "Réessayer",
+  "contextOptional": "Contexte (optionnel)",
+  "hideContext": "Masquer le contexte",
+  "contextPlaceholder": "Ajoutez du contexte ou des notes pour guider le retour…",
+  "addAttachment": "Ajouter une pièce jointe",
+  "hideContextNotes": "Masquer contexte/notes",
+  "addContextNotes": "Ajouter contexte/notes",
+  "openSidebar": "Ouvrir la barre latérale",
+  "messages": "{count} messages",
+  "@messages": {
+    "description": "Affiche le nombre de messages dans la conversation",
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "switchToLight": "Passer au thème clair",
+  "switchToDark": "Passer au thème sombre",
+  "switchToSystem": "Passer au thème système"
+}
