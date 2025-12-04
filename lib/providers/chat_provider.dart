@@ -206,10 +206,10 @@ class ChatProvider extends ChangeNotifier {
   }
 
   void createNewConversation() {
-    final l10n = AppLocalizations(Locale(_languageCode));
+    // Create conversation with empty title so UI can localize label dynamically
     final newConversation = Conversation(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title: l10n.newChat,
+      title: '',
       messages: [],
       lastUpdated: DateTime.now(),
     );
@@ -297,42 +297,40 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
     _saveConversations();
 
-    // 2. Evaluate the prompt and attach results
+    // 2. Evaluate the prompt and attach results, then stream a
+    // conversation-aware coaching reply from the main assistant.
     try {
       setStatus(ChatStatus.submitting);
       final eval = await _evaluateAndAttach(userMessage, conversation, modelId);
 
       // Save to prompt history
       try {
-          final record = PromptHistoryEntry.fromMessageEval(
+        final record = PromptHistoryEntry.fromMessageEval(
           id: userMessage.id,
           timestamp: userMessage.timestamp,
           prompt: userMessage.content,
           context: userMessage.context,
           eval: eval,
           languageCode: _languageCode,
-            // Store a human-readable label in history (canonical English)
-            userRole: _userRole.canonicalLabel,
+          // Store a human-readable label in history (canonical English)
+          userRole: _userRole.canonicalLabel,
         );
         await _addHistoryRecord(record);
       } catch (e) {
         debugPrint('Failed to add prompt history record: $e');
       }
 
-      // 3. Create assistant message with grading and suggestions instead of answering the prompt
-      final aiMessage = Message(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        role: MessageRole.assistant,
-        content: _buildEvaluationAssistantMarkdown(eval),
-        timestamp: DateTime.now(),
+      // 3. After attaching the evaluation, generate a streaming AI
+      // coaching response using the full conversation history.
+      await _generateAiResponse(
+        conversation,
+        modelId,
+        // Use the global prompt-trainer persona; it already knows to
+        // behave as a conversation-aware AI prompt trainer.
+        systemPrompt: AppConfig.mainAssistantSystemPrompt,
       );
-      conversation.messages.add(aiMessage);
-      conversation.lastUpdated = DateTime.now();
-      notifyListeners();
-      _saveConversations();
-      _saveConversations();
     } catch (e) {
-      debugPrint('Failed to produce evaluation response: $e');
+      debugPrint('Failed to handle sendMessage flow: $e');
       // Surface an error assistant message
       final l10n = AppLocalizations(Locale(_languageCode));
       final errorMessage = Message(
@@ -345,6 +343,8 @@ class ChatProvider extends ChangeNotifier {
       notifyListeners();
       _saveConversations();
     } finally {
+      // _generateAiResponse manages status during streaming; when this
+      // whole flow finishes we return to idle.
       setStatus(ChatStatus.idle);
     }
   }
@@ -531,36 +531,9 @@ class ChatProvider extends ChangeNotifier {
   }
 
   String _buildEvaluationAssistantMarkdown(PromptEvaluation eval) {
-    final explanation = (eval.explanation).trim();
-
-    // Try to extract bullet suggestions from the explanation
-    final lines = explanation.split('\n');
-    final bullets = <String>[];
-    for (final line in lines) {
-      final l = line.trim();
-      if (l.startsWith('- ') || l.startsWith('• ') || l.startsWith('* ')) {
-        bullets.add(l.replaceFirst(RegExp(r'^[\-•\*]\s*'), ''));
-      }
-    }
-
-    // Build minimal markdown without hardcoded labels or headings.
-    // using localized strings from AppLocalizations.
-    final buf = StringBuffer();
-
-    // Include the explanation as plain text.
-    if (explanation.isNotEmpty) {
-      buf.writeln(explanation);
-    }
-
-    // If bullet items were detected, render them as a simple list without a heading.
-    if (bullets.isNotEmpty) {
-      if (explanation.isNotEmpty) buf.writeln('');
-      for (final b in bullets) {
-        buf.writeln('- $b');
-      }
-    }
-
-    return buf.toString();
+    // The evaluator already returns markdown in `explanation`, including
+    // bullet points. Forward it directly so bullets render exactly once.
+    return eval.explanation.trim();
   }
 
   Future<void> _generateTitle(String content, Conversation conversation) async {
@@ -595,7 +568,9 @@ class ChatProvider extends ChangeNotifier {
       final responseStream = _chatRepository.streamChat(
         history: conversation.messages,
         modelId: modelId,
-        systemPrompt: systemPrompt,
+        // Always fall back to the global prompt-trainer persona so the
+        // assistant behaves as a conversation-aware prompt coach.
+        systemPrompt: systemPrompt ?? AppConfig.mainAssistantSystemPrompt,
       );
 
       // Create AI message and start streaming into it

@@ -6,8 +6,8 @@ import '../providers/chat_provider.dart';
 import 'response.dart';
 import 'response_actions.dart';
 import 'loader.dart';
-import '../theme.dart';
 import '../l10n/app_localizations.dart';
+import 'prompt_quality_card.dart';
 
 /// Renders individual chat messages with role-based styling.
 class MessageView extends StatelessWidget {
@@ -120,10 +120,8 @@ class MessageView extends StatelessWidget {
               if (prevHasEval) ...[
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 600),
-                  child: _PromptQualityCard(
-                    score: prev!.evaluation!.score,
-                    explanation: prev.evaluation!.explanation,
-                    leftAligned: true,
+                  child: PromptQualityCard(
+                    evaluation: prev!.evaluation!,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -248,80 +246,4 @@ class MessageView extends StatelessWidget {
   }
 }
 
-class _PromptQualityCard extends StatelessWidget {
-  final int score;
-  final String explanation;
-  final bool leftAligned; // true for assistant side, false for user side
-  const _PromptQualityCard({required this.score, required this.explanation, this.leftAligned = true});
-
-  Color _interpolate(BuildContext context, double t) {
-    // t in [0,1]; 0 = red, 0.5 = amber, 1 = green
-    final extras = Theme.of(context).extension<ScoreColors>();
-    final low = extras?.low ?? Colors.red;
-    final mid = extras?.mid ?? Colors.orange;
-    final high = extras?.high ?? Colors.green;
-
-    Color lerp(Color a, Color b, double tt) => Color.lerp(a, b, tt) ?? a;
-    if (t < 0.5) {
-      return lerp(low, mid, t / 0.5);
-    } else {
-      return lerp(mid, high, (t - 0.5) / 0.5);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final clamped = score.clamp(1, 10);
-    final t = (clamped - 1) / 9; // 0..1
-    final color = _interpolate(context, t.toDouble());
-    // Choose readable foreground color against the score background
-    final onColor = color.computeLuminance() > 0.5 ? Colors.black : Colors.white;
-
-    return Container(
-      margin: leftAligned
-          ? const EdgeInsets.only(right: 48)
-          : const EdgeInsets.only(left: 48),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        // Use the score color as the background instead of a neutral surface
-        color: color,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: onColor.withValues(alpha: 0.06)),
-      ),
-      child: Column(
-        crossAxisAlignment: leftAligned ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.promptQuality,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: onColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-              const SizedBox(width: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  // Subtle chip using the foreground color for contrast
-                  color: onColor.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  clamped.toString(),
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: onColor,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
+// Prompt quality card moved to lib/widgets/prompt_quality_card.dart

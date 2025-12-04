@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/conversation.dart';
 import '../providers/chat_provider.dart';
-import 'prompt_history_list.dart';
-import 'favorite_prompt_list.dart';
 import '../l10n/app_localizations.dart';
+import 'favorite_prompt_list.dart';
+import 'prompt_history_list.dart';
+import 'sidebar_tab_button.dart';
+import 'sidebar_conversation_item.dart';
 
 /// Responsive sidebar for conversation management.
 class ChatSidebar extends StatefulWidget {
@@ -21,6 +23,7 @@ class _ChatSidebarState extends State<ChatSidebar> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: 350,
       decoration: BoxDecoration(
@@ -43,13 +46,13 @@ class _ChatSidebarState extends State<ChatSidebar> {
         children: [
           _buildHeader(context),
           const SizedBox(height: 4),
-          Expanded(
-            child: _tabIndex == 0
-                ? _buildConversationList(context)
-                : _tabIndex == 1
-                    ? PromptHistoryList(onClose: widget.onClose)
-                    : FavoritePromptList(onClose: widget.onClose),
-          ),
+           Expanded(
+             child: _tabIndex == 0
+                 ? _buildConversationList(context)
+                 : _tabIndex == 1
+                     ? PromptHistoryList(onClose: widget.onClose)
+                     : FavoritePromptList(onClose: widget.onClose),
+           ),
         ],
       ),
     );
@@ -92,7 +95,7 @@ class _ChatSidebarState extends State<ChatSidebar> {
               width: 8,
             ), // Align with main content when no close button
           ],
-          Expanded(child: _buildTabs(context)),
+           Expanded(child: _buildTabs(context)),
           IconButton(
             onPressed: () {
               if (_tabIndex == 0) {
@@ -126,37 +129,37 @@ class _ChatSidebarState extends State<ChatSidebar> {
 
   Widget _buildTabs(BuildContext context) {
     final isChats = _tabIndex == 0;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(4),
       child: Row(
         children: [
-          Expanded(
-            child: _SidebarTabButton(
-              icon: isChats ? Icons.forum : Icons.forum_outlined,
-              tooltip: l10n.chats,
-              selected: isChats,
-              onTap: () => setState(() => _tabIndex = 0),
-            ),
-          ),
+           Expanded(
+             child: SidebarTabButton(
+               icon: isChats ? Icons.forum : Icons.forum_outlined,
+               label: l10n.chats,
+               isSelected: isChats,
+               onTap: () => setState(() => _tabIndex = 0),
+             ),
+           ),
           const SizedBox(width: 6),
-          Expanded(
-            child: _SidebarTabButton(
-              icon: Icons.history,
-              tooltip: l10n.history,
-              selected: _tabIndex == 1,
-              onTap: () => setState(() => _tabIndex = 1),
-            ),
-          ),
+           Expanded(
+             child: SidebarTabButton(
+               icon: Icons.history,
+               label: l10n.history,
+               isSelected: _tabIndex == 1,
+               onTap: () => setState(() => _tabIndex = 1),
+             ),
+           ),
           const SizedBox(width: 6),
-          Expanded(
-            child: _SidebarTabButton(
-              icon: _tabIndex == 2 ? Icons.star : Icons.star_border,
-              tooltip: l10n.favorites,
-              selected: _tabIndex == 2,
-              onTap: () => setState(() => _tabIndex = 2),
-            ),
-          ),
+           Expanded(
+             child: SidebarTabButton(
+               icon: _tabIndex == 2 ? Icons.star : Icons.star_border,
+               label: l10n.favorites,
+               isSelected: _tabIndex == 2,
+               onTap: () => setState(() => _tabIndex = 2),
+             ),
+           ),
         ],
       ),
     );
@@ -196,160 +199,18 @@ class _ChatSidebarState extends State<ChatSidebar> {
     );
   }
 
-  Widget _buildConversationItem(
-    BuildContext context,
-    Conversation conversation,
-    bool isSelected,
-    VoidCallback onTap,
-    VoidCallback onDelete,
-  ) {
-    return _ConversationItem(
-      conversation: conversation,
-      isSelected: isSelected,
-      onTap: onTap,
-      onDelete: onDelete,
-    );
-  }
-}
-
-class _SidebarTabButton extends StatelessWidget {
-  final IconData icon;
-  final String tooltip;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _SidebarTabButton({
-    required this.icon,
-    required this.tooltip,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final iconColor = selected
-        ? colorScheme.onPrimaryContainer
-        : colorScheme.onSurface.withValues(alpha: 0.7);
-
-    return Tooltip(
-      message: tooltip,
-      waitDuration: const Duration(milliseconds: 400),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          decoration: BoxDecoration(
-            color: selected ? colorScheme.primaryContainer : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          alignment: Alignment.center,
-          child: Icon(icon, size: 20, color: iconColor),
-        ),
-      ),
-    );
-  }
-}
-
-class _ConversationItem extends StatefulWidget {
-  final Conversation conversation;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final VoidCallback onDelete;
-
-  const _ConversationItem({
-    required this.conversation,
-    required this.isSelected,
-    required this.onTap,
-    required this.onDelete,
-  });
-
-  @override
-  State<_ConversationItem> createState() => _ConversationItemState();
-}
-
-class _ConversationItemState extends State<_ConversationItem> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color:
-            widget.isSelected
-                ? Theme.of(
-                  context,
-                ).colorScheme.primaryContainer.withValues(alpha: 0.5)
-                : null,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: MouseRegion(
-        onEnter: (_) => setState(() => _isHovered = true),
-        onExit: (_) => setState(() => _isHovered = false),
-        child: ListTile(
-          onTap: widget.onTap,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 2,
-          ),
-          title: Text(
-            widget.conversation.title,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w400,
-              color:
-                  widget.isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : null,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          subtitle: Text(
-            _formatLastUpdated(widget.conversation.lastUpdated),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-          ),
-          trailing:
-              _isHovered
-                  ? IconButton(
-                    icon: Icon(
-                      Icons.delete_outline_rounded,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                    onPressed: widget.onDelete,
-                    tooltip: AppLocalizations.of(context)!.deleteConversation,
-                    constraints: const BoxConstraints(
-                      minWidth: 32,
-                      minHeight: 32,
-                    ),
-                    padding: EdgeInsets.zero,
-                  )
-                  : null,
-        ),
-      ),
-    );
-  }
-
-  String _formatLastUpdated(DateTime lastUpdated) {
-    final now = DateTime.now();
-    final difference = now.difference(lastUpdated);
-    final l10n = AppLocalizations.of(context)!;
-    if (difference.inMinutes < 1) {
-      return l10n.justNow;
-    } else if (difference.inHours < 1) {
-      return l10n.minutesAgoShort(difference.inMinutes);
-    } else if (difference.inDays < 1) {
-      return l10n.hoursAgoShort(difference.inHours);
-    } else if (difference.inDays < 7) {
-      return l10n.daysAgoShort(difference.inDays);
-    } else {
-      return l10n.weeksAgoShort((difference.inDays / 7).floor());
-    }
-  }
-}
+   Widget _buildConversationItem(
+     BuildContext context,
+     Conversation conversation,
+     bool isSelected,
+     VoidCallback onTap,
+     VoidCallback onDelete,
+   ) {
+     return SidebarConversationItem(
+       conversation: conversation,
+       isSelected: isSelected,
+       onTap: onTap,
+       onDelete: onDelete,
+     );
+   }
+ }

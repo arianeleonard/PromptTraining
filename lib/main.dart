@@ -64,8 +64,8 @@ class AiChatApp extends StatelessWidget {
             darkTheme: darkTheme,
             themeMode: themeProvider.themeMode,
             locale: localeProvider.locale,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizationsConfig.localizationsDelegates,
+            supportedLocales: AppLocalizationsConfig.supportedLocales,
             home: const ChatPage(),
           );
         },

@@ -9,7 +9,9 @@ class ConversationService {
   static Conversation createConversation({String? title}) {
     final conversation = Conversation(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title: title ?? 'New Conversation',
+      // Default to empty title so UI can localize label based on current language.
+      // This ensures empty chats update their title when locale changes.
+      title: title ?? '',
       messages: [],
       lastUpdated: DateTime.now(),
     );
