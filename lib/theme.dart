@@ -42,14 +42,14 @@ class DarkColors {
   static const primary = Color(0xFF89C5FF);
   static const primaryForeground = Color(0xFF121821);
   static const secondary = Color(0xFFFCA58B);
-  static const secondaryForeground = Color(0xFF302B29);
+  static const secondaryForeground = Color(0xFFAED7FF);
   static const muted = Color(0xFFAED7FF);
-  static const mutedForeground = Color(0xFFFFFFFF);
-  static const accent = Color(0xFF333333);
+  static const mutedForeground = Color(0xFFAED7FF);
+  static const accent = Color(0xFF89C5FF);
   static const accentForeground = Color(0xFFFFFFFF);
   static const destructive = Color(0xFFD93B27);
   static const destructiveForeground = Color(0xFFFDEFED);
-  static const border = Color(0xFFFFFFFF);
+  static const border = Color(0xFFAED7FF);
   static const input = Color(0xFF333333);
   static const ring = Color(0xFFA4A4A4);
 

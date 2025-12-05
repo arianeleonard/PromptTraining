@@ -39,8 +39,16 @@ class Response extends StatelessWidget {
         blockquoteDecoration: BoxDecoration(
           border: Border(
             left: BorderSide(
-              color: Theme.of(context).colorScheme.primary,
-              width: 3,
+              color: Theme.of(context).dividerColor,
+              width: 1,
+            ),
+          ),
+        ),
+        horizontalRuleDecoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).dividerColor,
+              width: 1,
             ),
           ),
         ),
