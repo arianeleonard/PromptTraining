@@ -11,7 +11,7 @@ class AppConfig {
   // ⚠️  NEVER commit or deploy with this key set - it becomes publicly visible in web builds!
   // ⚠️  For production deployment, use backend proxy to keep API keys secure.
   static const String testingOnlyOpenRouterApiKey =
-      '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'; // Paste your key here for local testing only
+      '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'; // Paste your key here for local testing only
 
   static const String openRouterApiKey = String.fromEnvironment(
     'OPENROUTER_API_KEY',

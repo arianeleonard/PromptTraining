@@ -133,9 +133,9 @@ ThemeData get lightTheme => ThemeData(
   dividerColor: LightColors.border,
   extensions: const <ThemeExtension<dynamic>>[
     ScoreColors(
-      low: Color(0xFFE54B4F),
-      mid: Color(0xFFF59E0B),
-      high: Color(0xFF22C55E),
+      low: Color(0xFFC40000),
+      mid: Color(0xFFFFC800),
+      high: Color(0xFF2EB800),
     ),
   ],
   appBarTheme: const AppBarTheme(
@@ -208,9 +208,9 @@ ThemeData get darkTheme => ThemeData(
   dividerColor: DarkColors.border,
   extensions: const <ThemeExtension<dynamic>>[
     ScoreColors(
-      low: Color(0xFFFF5B5B),
-      mid: Color(0xFFF59E0B),
-      high: Color(0xFF22C55E),
+      low: Color(0xFFC40000),
+      mid: Color(0xFFFFC800),
+      high: Color(0xFF2EB800),
     ),
   ],
   appBarTheme: const AppBarTheme(

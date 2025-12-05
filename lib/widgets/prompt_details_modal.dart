@@ -139,10 +139,17 @@ class PromptDetailsModal extends StatelessWidget {
     );
   }
 
-  Color _scoreBg(BuildContext context) => ScoreColorUtils.colorForScore(context, entry.score);
+  Color _scoreBg(BuildContext context) {
+    // Use the score color as a tinted background with medium opacity.
+    final scoreColor = ScoreColorUtils.colorForScore(context, entry.score);
+    return scoreColor.withValues(alpha: 0.16);
+  }
 
-  Color _scoreFg(BuildContext context) =>
-      ScoreColorUtils.onColor(ScoreColorUtils.colorForScore(context, entry.score));
+  Color _scoreFg(BuildContext context) {
+    // Always use high-contrast on-surface text so the score stays readable
+    // regardless of the underlying score hue.
+    return Theme.of(context).colorScheme.onSurface;
+  }
 
   String _formatDate(BuildContext context, DateTime dt) {
     final locale = Localizations.localeOf(context).toLanguageTag();

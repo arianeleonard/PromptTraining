@@ -14,69 +14,37 @@ class PromptQualityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scoreColor = ScoreColorUtils.colorForScore(context, evaluation.score);
+    final theme = Theme.of(context);
+    // Use surface from theme for high-contrast text on a solid score color.
+    final surface = theme.colorScheme.surface;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.assessment_rounded, color: scoreColor),
-                const SizedBox(width: 8),
-                Text(
-                  // Use localization key if needed at call sites; keeping
-                  // label simple here.
-                  'Prompt Quality',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const Spacer(),
-                Text(
-                  evaluation.score.toString(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall
-                      ?.copyWith(color: scoreColor),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _buildScoreChip(
-                  context,
-                  label: 'Score',
-                  score: evaluation.score.toDouble(),
-                ),
-              ],
-            ),
-            if (evaluation.explanation.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(
-                evaluation.explanation,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ],
-        ),
+    // Compact, score-colored pill with just label and numeric score.
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        // Full strength score color as background for stronger visual signal.
+        color: scoreColor,
+        borderRadius: BorderRadius.circular(999),
       ),
-    );
-  }
-
-  Widget _buildScoreChip(BuildContext context,
-      {required String label, required double score}) {
-    final color = ScoreColorUtils.colorForScore(context, score.round());
-    return Chip(
-      label: Text('$label: ${score.toStringAsFixed(1)}'),
-      backgroundColor: color.withValues(alpha: 0.12),
-      labelStyle: Theme.of(context)
-          .textTheme
-          .labelMedium
-          ?.copyWith(color: color),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Prompt Quality',
+            style: theme.textTheme.labelMedium?.copyWith(
+                  color: surface,
+                ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            evaluation.score.toString(),
+            style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: surface,
+                ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -18,9 +18,10 @@ class PromptTile extends StatelessWidget {
   Color _scoreBg(BuildContext context) =>
       ScoreColorUtils.colorForScore(context, entry.score);
 
-  Color _scoreFg(BuildContext context) => ScoreColorUtils.onColor(
-    ScoreColorUtils.colorForScore(context, entry.score),
-  );
+  // Use a high-contrast foreground color from the theme, similar to
+  // PromptDetailsModal, instead of a non-existent ScoreColorUtils.onColor.
+  Color _scoreFg(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
 
   String _formatDate(BuildContext context, DateTime dt) {
     final locale = Localizations.localeOf(context).toLanguageTag();
@@ -103,7 +104,7 @@ class PromptTile extends StatelessWidget {
                           style: Theme.of(
                             context,
                           ).textTheme.labelLarge?.copyWith(
-                            color: _scoreFg(context),
+                            color: Theme.of(context).colorScheme.surface,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
