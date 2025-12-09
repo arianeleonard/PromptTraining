@@ -47,6 +47,32 @@ class AppLocalizations {
   String get switchToSystem =>
       _isFr ? 'Utiliser le thème du système' : 'Use system theme';
 
+  // Settings
+  String get settingsTitle => _isFr ? 'Paramètres' : 'Settings';
+  String get settingsSubtitle =>
+      _isFr ? 'Personnalisez votre expérience' : 'Customize your experience';
+  String get settingsLanguageSection => _isFr ? 'Langue' : 'Language';
+  String get settingsRoleSection => _isFr ? 'Votre rôle' : 'Your role';
+  String get settingsContextSection =>
+      _isFr ? 'Contexte de travail' : 'Work context';
+  String get settingsContextHint => _isFr
+      ? 'Ce contexte sera ajouté automatiquement à vos prompts si vous utilisez un modèle.'
+      : 'This context will be automatically added to your prompts when using a template.';
+  String get settingsPrefsSavedLocally => _isFr
+      ? 'Vos préférences sont sauvegardées localement sur votre appareil.'
+      : 'Your preferences are saved locally on your device.';
+  String get settingsRoleHint => _isFr
+      ? 'Ex: Stratège, Designer, Développeur…'
+      : 'E.g. Strategist, Designer, Developer…';
+  String get settingsContextFieldHint => _isFr
+      ? 'Décrivez votre contexte de travail, secteur, objectifs…'
+      : 'Describe your work context, industry, goals…';
+  String get settingsThemeSection => _isFr ? 'Thème' : 'Theme';
+  String get settingsThemeLight => _isFr ? 'Clair' : 'Light';
+  String get settingsThemeDark => _isFr ? 'Sombre' : 'Dark';
+  String get settingsThemeSystem =>
+      _isFr ? 'Paramètres de l’appareil' : 'Device settings';
+
   // Message / assistant labels
   String get assistantLabel => _isFr ? 'Assistant' : 'Assistant';
   String get thinking => _isFr ? 'Réflexion en cours…' : 'Thinking…';

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/chat_app_bar.dart';
-import '../widgets/chat_header_title.dart';
+
+import '../core/config.dart';
+import '../l10n/app_localizations.dart';
+import '../providers/chat_provider.dart';
 import '../widgets/prompt_input.dart';
 import '../widgets/conversation.dart';
-import '../widgets/chat_sidebar.dart';
 import '../widgets/empty_chat_state.dart';
-import '../providers/chat_provider.dart';
-import '../core/config.dart';
+import '../widgets/gradient_page_shell.dart';
 
 /// Main layout and responsive container for the AI chat application
 class ChatPage extends StatefulWidget {
@@ -18,136 +18,74 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
-  bool _isSidebarCollapsed = true;
-  late AnimationController _sidebarAnimationController;
-  late Animation<double> _sidebarAnimation;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
-  void initState() {
-    super.initState();
-    _sidebarAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 180),
-      vsync: this,
-    );
-    _sidebarAnimation = CurvedAnimation(
-      parent: _sidebarAnimationController,
-      curve: Curves.easeInOut,
-    );
-  }
-
-  @override
-  void dispose() {
-    _sidebarAnimationController.dispose();
-    super.dispose();
-  }
-
-  void _toggleSidebar() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
-
-    if (isMobile) {
-      // On mobile, just open the drawer
-      _scaffoldKey.currentState?.openDrawer();
-    } else {
-      // On desktop, use animated sidebar
-      setState(() {
-        _isSidebarCollapsed = !_isSidebarCollapsed;
-      });
-
-      if (_isSidebarCollapsed) {
-        _sidebarAnimationController.reverse();
-      } else {
-        _sidebarAnimationController.forward();
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768; // Mobile breakpoint
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    final l10n = AppLocalizations.of(context);
 
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer:
-          isMobile
-              ? Drawer(
-                width: 380,
-                elevation: 0,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
-                child: SafeArea(
-                  // Apply safe area to avoid status bar / home indicator overlap in drawer
-                  child: ChatSidebar(
-                    onClose: () {
-                      Navigator.of(context).pop();
-                      setState(() {
-                        _isSidebarCollapsed = true;
-                      });
-                    },
-                  ),
-                ),
-              )
-              : null,
-      body: SafeArea(
-        // Wrap the entire content in SafeArea to respect notches and system insets
+    return GradientPageShell(
+      scaffoldKey: _scaffoldKey,
+      header: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Desktop sidebar
-            if (!isMobile)
-              AnimatedBuilder(
-                animation: _sidebarAnimation,
-                builder: (context, child) {
-                  return ClipRect(
-                    child: SizeTransition(
-                      sizeFactor: _sidebarAnimation,
-                      axis: Axis.horizontal,
-                      axisAlignment: -1,
-                      child: ChatSidebar(onClose: _toggleSidebar),
-                    ),
-                  );
-                },
-              ),
             Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                   ChatAppBar(
-                     onToggleSidebar: _toggleSidebar,
-                     isMobile: isMobile,
-                   ),
-                   _buildConversationHeader(context),
-                  Expanded(
-                    child: Consumer<ChatProvider>(
-                      builder: (context, chatProvider, child) {
-                        final hasSelectedChat =
-                            chatProvider.selectedConversation != null;
-
-                        if (!hasSelectedChat) {
-                          return const EmptyChatState();
-                        }
-
-                        return _buildChatView(context);
-                      },
+                  Text(
+                    l10n.chats,
+                    style: textTheme.titleLarge?.copyWith(
+                      color: colorScheme.onPrimary,
+                      fontWeight: FontWeight.w600,
                     ),
+                  ),
+                  const SizedBox(height: 4),
+                  Consumer<ChatProvider>(
+                    builder: (context, chatProvider, _) {
+                      final count =
+                          chatProvider.conversations.length;
+                      final isFr =
+                          Localizations.localeOf(context)
+                                  .languageCode ==
+                              'fr';
+                      final label = isFr
+                          ? '$count conversations'
+                          : '$count conversations';
+                      return Text(
+                        label,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onPrimary
+                              .withValues(alpha: 0.85),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
+            const SizedBox(width: 12),
+            const _NewChatButton(),
           ],
         ),
       ),
-    );
-  }
+      body: Consumer<ChatProvider>(
+        builder: (context, chatProvider, child) {
+          final hasSelectedChat = chatProvider.selectedConversation != null;
 
-  Widget _buildConversationHeader(BuildContext context) {
-    return Consumer<ChatProvider>(
-      builder: (context, chatProvider, child) {
-        final conversation = chatProvider.selectedConversation;
-        if (conversation == null) return const SizedBox.shrink();
-        return ChatHeaderTitle(conversation: conversation);
-      },
+          if (!hasSelectedChat) {
+            return const EmptyChatState();
+          }
+
+          return _buildChatView(context);
+        },
+      ),
     );
   }
 
@@ -195,4 +133,58 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
+}
+
+class _NewChatButton extends StatelessWidget {
+  const _NewChatButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    final l10n = AppLocalizations.of(context);
+
+    return Consumer<ChatProvider>(
+      builder: (context, chatProvider, _) {
+        return InkWell(
+          borderRadius: BorderRadius.circular(999),
+          onTap: () {
+            chatProvider.createNewConversation();
+          },
+          splashFactory: NoSplash.splashFactory,
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: colorScheme.surface.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(
+                color: colorScheme.onPrimary.withValues(alpha: 0.18),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.add,
+                  size: 18,
+                  color: colorScheme.onPrimary,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  l10n.newChat,
+                  style: textTheme.labelMedium?.copyWith(
+                    color: colorScheme.onPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

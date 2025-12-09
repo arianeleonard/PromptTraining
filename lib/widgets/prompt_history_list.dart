@@ -6,8 +6,7 @@ import '../providers/chat_provider.dart';
 import 'prompt_tile.dart';
 
 class PromptHistoryList extends StatelessWidget {
-  final VoidCallback? onClose;
-  const PromptHistoryList({super.key, required this.onClose});
+  const PromptHistoryList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +29,7 @@ class PromptHistoryList extends StatelessWidget {
           itemCount: history.length,
           itemBuilder: (context, index) {
             final item = history[index];
-            return PromptTile(entry: item, onClose: onClose);
+            return PromptTile(entry: item);
           },
         );
       },

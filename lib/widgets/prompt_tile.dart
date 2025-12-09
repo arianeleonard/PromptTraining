@@ -1,3 +1,4 @@
+import 'package:betterprompts/root_tab_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -12,8 +13,7 @@ import 'prompt_details_modal.dart';
 /// Tile for a single prompt entry.
 class PromptTile extends StatelessWidget {
   final PromptHistoryEntry entry;
-  final VoidCallback? onClose;
-  const PromptTile({super.key, required this.entry, required this.onClose});
+  const PromptTile({super.key, required this.entry});
 
   Color _scoreBg(BuildContext context) =>
       ScoreColorUtils.colorForScore(context, entry.score);
@@ -24,7 +24,6 @@ class PromptTile extends StatelessWidget {
       Theme.of(context).colorScheme.onSurface;
 
   String _formatDate(BuildContext context, DateTime dt) {
-    final locale = Localizations.localeOf(context).toLanguageTag();
     // Use intl only inside details modal for rich format; here we keep simple
     // to avoid extra deps import. Keeping same display as previous implementation.
     // ignore: depend_on_referenced_packages
@@ -78,7 +77,7 @@ class PromptTile extends StatelessWidget {
                       Expanded(
                         child: Text(
                           promptFirstLine.isEmpty
-                              ? AppLocalizations.of(context)!.untitledPrompt
+                              ? AppLocalizations.of(context).untitledPrompt
                               : promptFirstLine,
                           style: Theme.of(context).textTheme.bodyLarge
                               ?.copyWith(fontWeight: FontWeight.w600),
@@ -168,17 +167,16 @@ class PromptTile extends StatelessWidget {
                       size: 18,
                       color:
                           entry.isFavorite
-                              ? (Theme.of(
-                                    context,
-                                  ).extension<ScoreColors>()?.mid ??
-                                  Theme.of(context).colorScheme.secondary)
+                              ? (Theme.of(context).brightness == Brightness.dark
+                                ? DarkColors.chart1
+                                : LightColors.chart1)
                               : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   tooltip:
                       entry.isFavorite
-                          ? AppLocalizations.of(context)!.removeFromFavorites
-                          : AppLocalizations.of(context)!.addToFavorites,
+                          ? AppLocalizations.of(context).removeFromFavorites
+                          : AppLocalizations.of(context).addToFavorites,
                   style: IconButton.styleFrom(
                     splashFactory: NoSplash.splashFactory,
                     padding: const EdgeInsets.all(6),
@@ -189,19 +187,18 @@ class PromptTile extends StatelessWidget {
                 IconButton(
                   onPressed: () {
                     // Reinject prompt into input for revision
-                    // ignore: use_build_context_synchronously
                     context.read<ChatProvider>().setInputDraft(
                       entry.prompt,
                       focus: true,
                     );
-                    // After creating a new conversation, close the sidebar
-                    // Works for both mobile (drawer) and desktop (animated panel)
-                    if (onClose != null) {
-                      onClose!();
-                    }
+
+                    // Ask the root scaffold to switch to the Chat tab
+                    final rootState =
+                        context.findAncestorStateOfType<RootTabScaffoldState>();
+                    rootState?.startNewChat(context);
                   },
                   icon: const Icon(Icons.edit_outlined, size: 16),
-                  tooltip: AppLocalizations.of(context)!.useAsNewPrompt,
+                  tooltip: AppLocalizations.of(context).useAsNewPrompt,
                   style: IconButton.styleFrom(
                     splashFactory: NoSplash.splashFactory,
                     padding: const EdgeInsets.all(6),

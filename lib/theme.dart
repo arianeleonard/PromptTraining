@@ -19,12 +19,12 @@ class LightColors {
   static const accentForeground = Color(0xFFFFFFFF);
   static const destructive = Color(0xFFE54B4F);
   static const destructiveForeground = Color(0xFFFFFFFF);
-  static const border = Color(0xFF001E60);
-  static const input = Color(0xFFEBEBEB);
-  static const ring = Color(0xFF001E60);
+  static const border = Color(0x66001E60);
+  static const input = Color(0xFFF5FAFF);
+  static const ring = Color(0xE6001E60);
 
   // Additional colors
-  static const chart1 = Color(0xFFFFAE04);
+  static const chart1 = Color(0xFFFFC800);
   static const chart2 = Color(0xFF0D59D1);
   static const chart3 = Color(0xFFA4A4A4);
   static const chart4 = Color(0xFFE4E4E4);
@@ -49,12 +49,12 @@ class DarkColors {
   static const accentForeground = Color(0xFFFFFFFF);
   static const destructive = Color(0xFFD93B27);
   static const destructiveForeground = Color(0xFFFDEFED);
-  static const border = Color(0xFFAED7FF);
+  static const border = Color(0x66AED7FF);
   static const input = Color(0xFF333333);
-  static const ring = Color(0xFFA4A4A4);
+  static const ring = Color(0xE6AED7FF);
 
   // Additional colors
-  static const chart1 = Color(0xFFFFAE04);
+  static const chart1 = Color(0xFFFFC800);
   static const chart2 = Color(0xFF0D59D1);
   static const chart3 = Color(0xFF747474);
   static const chart4 = Color(0xFF525252);
@@ -165,7 +165,7 @@ ThemeData get lightTheme => ThemeData(
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: LightColors.ring, width: 2),
+      borderSide: const BorderSide(color: LightColors.ring),
     ),
   ),
   iconTheme: const IconThemeData(size: 20),
@@ -240,7 +240,7 @@ ThemeData get darkTheme => ThemeData(
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: DarkColors.ring, width: 2),
+      borderSide: const BorderSide(color: DarkColors.ring),
     ),
   ),
   iconTheme: const IconThemeData(size: 20),

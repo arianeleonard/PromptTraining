@@ -6,8 +6,7 @@ import '../providers/chat_provider.dart';
 import 'prompt_tile.dart';
 
 class FavoritePromptList extends StatelessWidget {
-  final VoidCallback? onClose;
-  const FavoritePromptList({super.key, required this.onClose});
+  const FavoritePromptList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class FavoritePromptList extends StatelessWidget {
         if (favorites.isEmpty) {
           return Center(
             child: Text(
-              AppLocalizations.of(context)!.noFavoritesYet,
+              AppLocalizations.of(context).noFavoritesYet,
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
@@ -30,7 +29,7 @@ class FavoritePromptList extends StatelessWidget {
           itemCount: favorites.length,
           itemBuilder: (context, index) {
             final item = favorites[index];
-            return PromptTile(entry: item, onClose: onClose);
+            return PromptTile(entry: item);
           },
         );
       },

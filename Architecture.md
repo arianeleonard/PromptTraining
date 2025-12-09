@@ -140,3 +140,7 @@ Suggest one improvement at a time in a clear, understandable way.
 Tailor feedback to user role, language, and context.
 
 Use structured responses wherever possible to integrate easily with the app.
+
+Always use Theme colors and styles.
+
+Always localize labels.

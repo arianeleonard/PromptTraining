@@ -1,10 +1,10 @@
+import 'package:betterprompts/providers/chat_provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'pages/chat_page.dart';
-import 'providers/chat_provider.dart';
+import 'root_tab_scaffold.dart';
 import 'providers/theme_provider.dart';
 import 'providers/locale_provider.dart';
 import 'theme.dart';
@@ -58,7 +58,7 @@ class AiChatApp extends StatelessWidget {
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {
           return MaterialApp(
-            onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+            onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
             debugShowCheckedModeBanner: false,
             theme: lightTheme,
             darkTheme: darkTheme,
@@ -66,7 +66,7 @@ class AiChatApp extends StatelessWidget {
             locale: localeProvider.locale,
             localizationsDelegates: AppLocalizationsConfig.localizationsDelegates,
             supportedLocales: AppLocalizationsConfig.supportedLocales,
-            home: const ChatPage(),
+            home: const RootTabScaffold(),
           );
         },
       ),
