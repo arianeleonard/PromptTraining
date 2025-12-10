@@ -38,12 +38,17 @@ class MessageView extends StatelessWidget {
             if (hasContext)
               Container(
                 margin: const EdgeInsets.only(left: 48, bottom: 6),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -59,8 +64,8 @@ class MessageView extends StatelessWidget {
                       child: Text(
                         message.context!.trim(),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ],
@@ -80,6 +85,12 @@ class MessageView extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 8),
+            // Edit prompt button
+            Padding(
+              padding: const EdgeInsets.only(left: 48),
+              child: _EditPromptButton(promptContent: message.content),
+            ),
           ],
         ),
       ),
@@ -96,9 +107,14 @@ class MessageView extends StatelessWidget {
             chatProvider.status == ChatStatus.streaming && isLastMessage;
 
         // Find previous user message (typically the prompt) to show its evaluation card here
-        int myIndex = chatProvider.messages.indexWhere((m) => m.id == message.id);
+        int myIndex = chatProvider.messages.indexWhere(
+          (m) => m.id == message.id,
+        );
         final prev = myIndex > 0 ? chatProvider.messages[myIndex - 1] : null;
-        final prevHasEval = prev != null && prev.role == MessageRole.user && prev.evaluation != null;
+        final prevHasEval =
+            prev != null &&
+            prev.role == MessageRole.user &&
+            prev.evaluation != null;
 
         return Align(
           alignment: Alignment.centerLeft,
@@ -120,9 +136,7 @@ class MessageView extends StatelessWidget {
               if (prevHasEval) ...[
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 600),
-                  child: PromptQualityCard(
-                    evaluation: prev.evaluation!,
-                  ),
+                  child: PromptQualityCard(evaluation: prev.evaluation!),
                 ),
                 const SizedBox(height: 10),
               ],
@@ -148,7 +162,10 @@ class MessageView extends StatelessWidget {
                   messageContent: message.content,
                   onThumbsUp: (selected) {
                     try {
-                      final chat = Provider.of<ChatProvider>(context, listen: false);
+                      final chat = Provider.of<ChatProvider>(
+                        context,
+                        listen: false,
+                      );
                       chat.setMessageThumbsUp(message.id, selected);
                     } catch (e) {
                       debugPrint('Failed to record thumbs up: $e');
@@ -156,7 +173,10 @@ class MessageView extends StatelessWidget {
                   },
                   onThumbsDown: (selected, choiceKey, notes) {
                     try {
-                      final chat = Provider.of<ChatProvider>(context, listen: false);
+                      final chat = Provider.of<ChatProvider>(
+                        context,
+                        listen: false,
+                      );
                       DownReason? reason;
                       switch (choiceKey) {
                         case 'vague':
@@ -171,7 +191,12 @@ class MessageView extends StatelessWidget {
                         default:
                           reason = null;
                       }
-                      chat.setMessageThumbsDown(message.id, selected, reason: reason, notes: notes);
+                      chat.setMessageThumbsDown(
+                        message.id,
+                        selected,
+                        reason: reason,
+                        notes: notes,
+                      );
                     } catch (e) {
                       debugPrint('Failed to record thumbs down: $e');
                     }
@@ -179,20 +204,17 @@ class MessageView extends StatelessWidget {
                   onCopy: () {
                     debugPrint('Copied message: ${message.id}');
                   },
-                  onShare: () {
-                    // TODO: Implement share functionality
-                    debugPrint('Share message: ${message.id}');
+                  onUseImprovedPrompt: (improvedPrompt) {
+                    try {
+                      final chat = Provider.of<ChatProvider>(
+                        context,
+                        listen: false,
+                      );
+                      chat.setInputDraft(improvedPrompt, focus: true);
+                    } catch (e) {
+                      debugPrint('Failed to set improved prompt: $e');
+                    }
                   },
-                   onUseAsNewPrompt: (prev != null && prev.role == MessageRole.user)
-                       ? () {
-                           try {
-                             final chat = Provider.of<ChatProvider>(context, listen: false);
-                             chat.setInputDraft(prev.content, focus: true);
-                           } catch (e) {
-                             debugPrint('Failed to set prompt draft: $e');
-                           }
-                         }
-                       : null,
                 ),
             ],
           ),
@@ -246,4 +268,68 @@ class MessageView extends StatelessWidget {
   }
 }
 
-// Prompt quality card moved to lib/widgets/prompt_quality_card.dart
+/// Edit prompt button for user messages
+class _EditPromptButton extends StatefulWidget {
+  final String promptContent;
+  const _EditPromptButton({required this.promptContent});
+
+  @override
+  State<_EditPromptButton> createState() => _EditPromptButtonState();
+}
+
+class _EditPromptButtonState extends State<_EditPromptButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(6),
+        onTap: () {
+          try {
+            final chat = Provider.of<ChatProvider>(context, listen: false);
+            chat.setInputDraft(widget.promptContent, focus: true);
+          } catch (e) {
+            debugPrint('Failed to set prompt draft: $e');
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            color:
+                _isHovered
+                    ? Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.08)
+                    : null,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.edit_outlined,
+                size: 14,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                AppLocalizations.of(context).editPrompt,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

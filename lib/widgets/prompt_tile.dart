@@ -1,13 +1,14 @@
 import 'package:betterprompts/root_tab_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/prompt_history_entry.dart';
 import '../providers/chat_provider.dart';
 import '../theme.dart';
 import '../utils/score_colors.dart';
+import '../utils/date_format_utils.dart';
+import '../utils/text_extraction_utils.dart';
 import 'prompt_details_modal.dart';
 
 /// Tile for a single prompt entry.
@@ -24,24 +25,7 @@ class PromptTile extends StatelessWidget {
       Theme.of(context).colorScheme.onSurface;
 
   String _formatDate(BuildContext context, DateTime dt) {
-    // Use intl only inside details modal for rich format; here we keep simple
-    // to avoid extra deps import. Keeping same display as previous implementation.
-    // ignore: depend_on_referenced_packages
-    final date = intlDate(context, dt);
-    // ignore: depend_on_referenced_packages
-    final time = intlTime(context, dt);
-    return '$date • $time';
-  }
-
-  // Reuse the intl formatting
-  static String intlDate(BuildContext context, DateTime dt) {
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    return DateFormat.yMMMd(locale).format(dt);
-  }
-
-  static String intlTime(BuildContext context, DateTime dt) {
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    return DateFormat.Hm(locale).format(dt);
+    return DateFormatUtils.formatDateTime(context, dt);
   }
 
   @override
@@ -168,8 +152,8 @@ class PromptTile extends StatelessWidget {
                       color:
                           entry.isFavorite
                               ? (Theme.of(context).brightness == Brightness.dark
-                                ? DarkColors.chart1
-                                : LightColors.chart1)
+                                  ? DarkColors.chart1
+                                  : LightColors.chart1)
                               : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
@@ -214,13 +198,6 @@ class PromptTile extends StatelessWidget {
   }
 
   String? _extractFirstBullet(String text) {
-    final lines = text.split('\n');
-    for (final l in lines) {
-      final s = l.trim();
-      if (s.startsWith('- ') || s.startsWith('• ') || s.startsWith('* ')) {
-        return s.replaceFirst(RegExp(r'^[\-•\*]\s*'), '');
-      }
-    }
-    return null;
+    return TextExtractionUtils.extractFirstBullet(text);
   }
 }

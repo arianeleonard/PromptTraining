@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import '../utils/date_format_utils.dart';
 import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
@@ -38,7 +38,9 @@ class PromptDetailsModal extends StatelessWidget {
           builder: (context, controller) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: PromptDetailsModal(entry: entry).buildContent(context, controller),
+              child: PromptDetailsModal(
+                entry: entry,
+              ).buildContent(context, controller),
             );
           },
         );
@@ -55,7 +57,9 @@ class PromptDetailsModal extends StatelessWidget {
             Expanded(
               child: Text(
                 AppLocalizations.of(context).promptReview,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
             IconButton(
@@ -65,19 +69,26 @@ class PromptDetailsModal extends StatelessWidget {
               },
               icon: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 180),
-                transitionBuilder: (child, anim) => FadeTransition(opacity: anim, child: child),
+                transitionBuilder:
+                    (child, anim) =>
+                        FadeTransition(opacity: anim, child: child),
                 child: Icon(
-                  entry.isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                  entry.isFavorite
+                      ? Icons.star_rounded
+                      : Icons.star_border_rounded,
                   key: ValueKey<bool>(entry.isFavorite),
                   size: 20,
-                  color: entry.isFavorite
-                      ? (Theme.of(context).extension<ScoreColors>()?.mid ?? Theme.of(context).colorScheme.secondary)
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                  color:
+                      entry.isFavorite
+                          ? (Theme.of(context).extension<ScoreColors>()?.mid ??
+                              Theme.of(context).colorScheme.secondary)
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
-              tooltip: entry.isFavorite
-                  ? AppLocalizations.of(context).removeFromFavorites
-                  : AppLocalizations.of(context).addToFavorites,
+              tooltip:
+                  entry.isFavorite
+                      ? AppLocalizations.of(context).removeFromFavorites
+                      : AppLocalizations.of(context).addToFavorites,
               style: IconButton.styleFrom(
                 splashFactory: NoSplash.splashFactory,
                 padding: const EdgeInsets.all(6),
@@ -89,35 +100,56 @@ class PromptDetailsModal extends StatelessWidget {
               decoration: BoxDecoration(
                 color: _scoreBg(context),
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: _scoreFg(context).withValues(alpha: 0.06)),
+                border: Border.all(
+                  color: _scoreFg(context).withValues(alpha: 0.06),
+                ),
               ),
               child: Text(
                 '${entry.score}/10',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(color: _scoreFg(context), fontWeight: FontWeight.w700),
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: _scoreFg(context),
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],
         ),
         const SizedBox(height: 12),
-        Text(_formatDate(context, entry.timestamp),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                )),
+        Text(
+          _formatDate(context, entry.timestamp),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
+        ),
         const SizedBox(height: 16),
-        Text(AppLocalizations.of(context).prompt,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          AppLocalizations.of(context).prompt,
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 6),
         Text(entry.prompt, style: Theme.of(context).textTheme.bodyMedium),
         if ((entry.context ?? '').isNotEmpty) ...[
           const SizedBox(height: 16),
-          Text(AppLocalizations.of(context).contextOptional,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+          Text(
+            AppLocalizations.of(context).contextOptional,
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 6),
           Text(entry.context!, style: Theme.of(context).textTheme.bodyMedium),
         ],
         const SizedBox(height: 16),
-        Text(AppLocalizations.of(context).aiFeedback,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          AppLocalizations.of(context).aiFeedback,
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 6),
         Text(entry.feedback, style: Theme.of(context).textTheme.bodyMedium),
         const SizedBox(height: 24),
@@ -131,7 +163,10 @@ class PromptDetailsModal extends StatelessWidget {
               const SizedBox(width: 8),
             ],
             if ((entry.languageCode ?? '').isNotEmpty)
-              _InfoChip(icon: Icons.language, label: (entry.languageCode!).toUpperCase()),
+              _InfoChip(
+                icon: Icons.language,
+                label: (entry.languageCode!).toUpperCase(),
+              ),
           ],
         ),
         const SizedBox(height: 24),
@@ -152,10 +187,7 @@ class PromptDetailsModal extends StatelessWidget {
   }
 
   String _formatDate(BuildContext context, DateTime dt) {
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final date = DateFormat.yMMMd(locale).format(dt);
-    final time = DateFormat.Hm(locale).format(dt);
-    return '$date • $time';
+    return DateFormatUtils.formatDateTime(context, dt);
   }
 
   String _localizedRoleLabel(BuildContext context, String stored) {
@@ -195,11 +227,7 @@ class _InfoChip extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Chip(
-      avatar: Icon(
-        icon,
-        size: 16,
-        color: theme.colorScheme.primary,
-      ),
+      avatar: Icon(icon, size: 16, color: theme.colorScheme.primary),
       label: Text(
         label,
         style: theme.textTheme.labelMedium?.copyWith(

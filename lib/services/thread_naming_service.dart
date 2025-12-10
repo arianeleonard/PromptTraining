@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../core/config.dart';
+import '../utils/text_extraction_utils.dart';
 import 'mock_responses_service.dart';
 
 class ThreadNamingService {
@@ -86,9 +87,6 @@ class ThreadNamingService {
 
   /// Fallback title generation when API fails
   String _generateFallbackTitle(String content) {
-    // Simple title generation from first message
-    final words = content.split(' ');
-    if (words.length <= 4) return content;
-    return '${words.take(4).join(' ')}...';
+    return TextExtractionUtils.generateFallbackTitle(content);
   }
 }

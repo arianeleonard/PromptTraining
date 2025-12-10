@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../l10n/app_localizations.dart';
 import '../theme.dart';
+import '../utils/text_extraction_utils.dart';
 
 /// Internal feedback options for thumbs-down flow
 enum _FeedbackOption { vague, incorrect, other }
@@ -18,10 +19,10 @@ class _FeedbackResult {
 class ResponseActions extends StatefulWidget {
   final String messageContent;
   final ValueChanged<bool>? onThumbsUp; // selected state
-  final void Function(bool selected, String? choiceKey, String? notes)? onThumbsDown;
+  final void Function(bool selected, String? choiceKey, String? notes)?
+  onThumbsDown;
   final VoidCallback? onCopy;
-  final VoidCallback? onShare;
-  final VoidCallback? onUseAsNewPrompt;
+  final ValueChanged<String>? onUseImprovedPrompt;
 
   const ResponseActions({
     super.key,
@@ -29,8 +30,7 @@ class ResponseActions extends StatefulWidget {
     this.onThumbsUp,
     this.onThumbsDown,
     this.onCopy,
-    this.onShare,
-    this.onUseAsNewPrompt,
+    this.onUseImprovedPrompt,
   });
 
   @override
@@ -75,6 +75,10 @@ class _ResponseActionsState extends State<ResponseActions> {
     });
   }
 
+  String? _extractImprovedPrompt() {
+    return TextExtractionUtils.extractImprovedPrompt(widget.messageContent);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -105,9 +109,11 @@ class _ResponseActionsState extends State<ResponseActions> {
             });
             widget.onThumbsUp?.call(_thumbsUpPressed);
           },
-          iconColor: _thumbsUpPressed
-              ? (Theme.of(context).extension<ScoreColors>()?.high ?? Theme.of(context).colorScheme.primary)
-              : null,
+          iconColor:
+              _thumbsUpPressed
+                  ? (Theme.of(context).extension<ScoreColors>()?.high ??
+                      Theme.of(context).colorScheme.primary)
+                  : null,
         ),
         const SizedBox(width: 4),
         _ActionButton(
@@ -130,7 +136,9 @@ class _ResponseActionsState extends State<ResponseActions> {
               // Make thumbs up/down mutually exclusive
               _thumbsUpPressed = false;
               _thumbsDownPressed = true;
-              _thumbsDownIconColor = Theme.of(context).extension<ScoreColors>()?.low ?? Theme.of(context).colorScheme.error;
+              _thumbsDownIconColor =
+                  Theme.of(context).extension<ScoreColors>()?.low ??
+                  Theme.of(context).colorScheme.error;
             });
 
             final result = await showDialog<_FeedbackResult>(
@@ -144,12 +152,16 @@ class _ResponseActionsState extends State<ResponseActions> {
                   builder: (context, setState) {
                     final canSubmit = localSelection != null;
                     return AlertDialog(
-                      title: Text(AppLocalizations.of(context).dislikeDialogTitle),
+                      title: Text(
+                        AppLocalizations.of(context).dislikeDialogTitle,
+                      ),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           RadioListTile<_FeedbackOption>(
-                            title: Text(AppLocalizations.of(context).feedbackTooVague),
+                            title: Text(
+                              AppLocalizations.of(context).feedbackTooVague,
+                            ),
                             value: _FeedbackOption.vague,
                             groupValue: localSelection,
                             onChanged: (value) {
@@ -157,7 +169,9 @@ class _ResponseActionsState extends State<ResponseActions> {
                             },
                           ),
                           RadioListTile<_FeedbackOption>(
-                            title: Text(AppLocalizations.of(context).feedbackIncorrect),
+                            title: Text(
+                              AppLocalizations.of(context).feedbackIncorrect,
+                            ),
                             value: _FeedbackOption.incorrect,
                             groupValue: localSelection,
                             onChanged: (value) {
@@ -165,7 +179,9 @@ class _ResponseActionsState extends State<ResponseActions> {
                             },
                           ),
                           RadioListTile<_FeedbackOption>(
-                            title: Text(AppLocalizations.of(context).feedbackOther),
+                            title: Text(
+                              AppLocalizations.of(context).feedbackOther,
+                            ),
                             value: _FeedbackOption.other,
                             groupValue: localSelection,
                             onChanged: (value) {
@@ -176,8 +192,14 @@ class _ResponseActionsState extends State<ResponseActions> {
                           TextField(
                             controller: _otherController,
                             decoration: InputDecoration(
-                              labelText: AppLocalizations.of(context).feedbackNotesLabel,
-                              hintText: AppLocalizations.of(context).feedbackNotesHint,
+                              labelText:
+                                  AppLocalizations.of(
+                                    context,
+                                  ).feedbackNotesLabel,
+                              hintText:
+                                  AppLocalizations.of(
+                                    context,
+                                  ).feedbackNotesHint,
                             ),
                             maxLines: 3,
                           ),
@@ -189,18 +211,20 @@ class _ResponseActionsState extends State<ResponseActions> {
                           child: Text(AppLocalizations.of(context).cancel),
                         ),
                         ElevatedButton(
-                          onPressed: canSubmit
-                              ? () {
-                                  Navigator.of(context).pop(
-                                    _FeedbackResult(
-                                      option: localSelection,
-                                      otherText: _otherController.text.trim().isEmpty
-                                          ? null
-                                          : _otherController.text.trim(),
-                                    ),
-                                  );
-                                }
-                              : null,
+                          onPressed:
+                              canSubmit
+                                  ? () {
+                                    Navigator.of(context).pop(
+                                      _FeedbackResult(
+                                        option: localSelection,
+                                        otherText:
+                                            _otherController.text.trim().isEmpty
+                                                ? null
+                                                : _otherController.text.trim(),
+                                      ),
+                                    );
+                                  }
+                                  : null,
                           child: Text(AppLocalizations.of(context).submit),
                         ),
                       ],
@@ -216,39 +240,38 @@ class _ResponseActionsState extends State<ResponseActions> {
                 _selectedOption = result.option;
               });
               // Notify with selection details
-              widget.onThumbsDown?.call(
-                true,
-                switch (result.option) {
-                  _FeedbackOption.vague => 'vague',
-                  _FeedbackOption.incorrect => 'incorrect',
-                  _FeedbackOption.other => 'other',
-                  null => null,
-                },
-                result.otherText,
-              );
+              widget.onThumbsDown?.call(true, switch (result.option) {
+                _FeedbackOption.vague => 'vague',
+                _FeedbackOption.incorrect => 'incorrect',
+                _FeedbackOption.other => 'other',
+                null => null,
+              }, result.otherText);
             }
           },
           iconColor: _thumbsDownIconColor,
         ),
         const SizedBox(width: 4),
-        if (widget.onUseAsNewPrompt != null) ...[
+        if (_extractImprovedPrompt() != null &&
+            widget.onUseImprovedPrompt != null) ...[
           _ActionButton(
-            icon: Icons.edit_outlined,
-            tooltip: AppLocalizations.of(context).editPrompt,
-            onPressed: widget.onUseAsNewPrompt,
+            icon: Icons.auto_fix_high_rounded,
+            tooltip: AppLocalizations.of(context).useImprovedPrompt,
+            onPressed: () {
+              final improvedPrompt = _extractImprovedPrompt();
+              if (improvedPrompt != null) {
+                widget.onUseImprovedPrompt?.call(improvedPrompt);
+              }
+            },
           ),
           const SizedBox(width: 4),
         ],
         _ActionButton(
           icon: _copied ? Icons.check_rounded : Icons.content_copy_rounded,
-          tooltip: _copied ? AppLocalizations.of(context).copied : AppLocalizations.of(context).copy,
+          tooltip:
+              _copied
+                  ? AppLocalizations.of(context).copied
+                  : AppLocalizations.of(context).copy,
           onPressed: _handleCopy,
-        ),
-        const SizedBox(width: 4),
-        _ActionButton(
-          icon: Icons.share_outlined,
-          tooltip: AppLocalizations.of(context).share,
-          onPressed: widget.onShare,
         ),
       ],
     );
@@ -288,18 +311,22 @@ class _ActionButtonState extends State<_ActionButton> {
           child: Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: _isHovered
-                  ? Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.08)
-                  : null,
+              color:
+                  _isHovered
+                      ? Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.08)
+                      : null,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
               widget.icon,
               size: 16,
-              color: widget.iconColor ??
-                  Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color:
+                  widget.iconColor ??
+                  Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ),

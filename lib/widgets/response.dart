@@ -3,6 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:google_fonts/google_fonts.dart';
 import 'code_block.dart';
+import '../utils/text_extraction_utils.dart';
 
 /// Markdown renderer for AI assistant messages with syntax highlighting.
 class Response extends StatelessWidget {
@@ -12,7 +13,7 @@ class Response extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MarkdownBody(
-      data: markdown,
+      data: TextExtractionUtils.preprocessMarkdown(markdown),
       builders: {'code': CodeBlockBuilder()},
       styleSheet: MarkdownStyleSheet(
         p: Theme.of(context).textTheme.bodyMedium,
@@ -38,18 +39,12 @@ class Response extends StatelessWidget {
         ),
         blockquoteDecoration: BoxDecoration(
           border: Border(
-            left: BorderSide(
-              color: Theme.of(context).dividerColor,
-              width: 1,
-            ),
+            left: BorderSide(color: Theme.of(context).dividerColor, width: 1),
           ),
         ),
         horizontalRuleDecoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).dividerColor,
-              width: 1,
-            ),
+            bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
           ),
         ),
         listBullet: Theme.of(context).textTheme.bodyMedium,
