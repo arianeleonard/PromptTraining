@@ -24,7 +24,7 @@ class ActionsBar extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.refresh_rounded, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           onPressed: onRetry,
-          tooltip: AppLocalizations.of(context)!.retry,
+          tooltip: AppLocalizations.of(context).retry,
           style: IconButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -32,7 +32,7 @@ class ActionsBar extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.thumb_up_outlined, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           onPressed: onLike,
-          tooltip: AppLocalizations.of(context)!.goodResponse,
+          tooltip: AppLocalizations.of(context).goodResponse,
           style: IconButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -40,7 +40,7 @@ class ActionsBar extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.thumb_down_outlined, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           onPressed: onDislike,
-          tooltip: AppLocalizations.of(context)!.poorResponse,
+          tooltip: AppLocalizations.of(context).poorResponse,
           style: IconButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -48,7 +48,7 @@ class ActionsBar extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.content_copy_rounded, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           onPressed: onCopy,
-          tooltip: AppLocalizations.of(context)!.copy,
+          tooltip: AppLocalizations.of(context).copy,
           style: IconButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -56,7 +56,7 @@ class ActionsBar extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.share_outlined, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           onPressed: onShare,
-          tooltip: AppLocalizations.of(context)!.share,
+          tooltip: AppLocalizations.of(context).share,
           style: IconButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
           ),

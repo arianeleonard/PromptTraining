@@ -16,7 +16,7 @@ class PromptHistoryList extends StatelessWidget {
         if (history.isEmpty) {
           return Center(
             child: Text(
-              AppLocalizations.of(context)!.noHistoryYet,
+              AppLocalizations.of(context).noHistoryYet,
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium

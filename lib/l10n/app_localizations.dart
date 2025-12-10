@@ -149,14 +149,13 @@ class AppLocalizations {
       : 'No conversations yet. Start a new one to begin.';
   String get justNow => _isFr ? 'À l’instant' : 'Just now';
   String minutesAgoShort(int minutes) =>
-      _isFr ? 'Il y a ${minutes} min' : '${minutes}m ago';
+      _isFr ? 'Il y a $minutes min' : '${minutes}m ago';
   String hoursAgoShort(int hours) =>
-      _isFr ? 'Il y a ${hours} h' : '${hours}h ago';
+      _isFr ? 'Il y a $hours h' : '${hours}h ago';
   String daysAgoShort(int days) =>
-      _isFr ? 'Il y a ${days} j' : '${days}d ago';
+      _isFr ? 'Il y a $days j' : '${days}d ago';
   String weeksAgoShort(int weeks) =>
-      _isFr ? 'Il y a ${weeks} sem' : '${weeks}w ago';
-
+      _isFr ? 'Il y a $weeks sem' : '${weeks}w ago';
   // Code block
   String get noHistoryYet =>
       _isFr ? 'Aucun historique encore.' : 'No history yet.';

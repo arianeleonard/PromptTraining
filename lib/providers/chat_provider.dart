@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../models/message.dart';
 import '../models/conversation.dart';
@@ -472,6 +471,19 @@ class ChatProvider extends ChangeNotifier {
     _saveConversations();
   }
 
+  /// Build enhanced system prompt that includes user feedback from this conversation.
+  String _buildEnhancedSystemPrompt({
+    required String basePrompt,
+    required Conversation conversation,
+  }) {
+    final feedbackSummary = _buildPreferenceSummary(conversation);
+    if (feedbackSummary == null) {
+      return basePrompt; // No feedback yet, use base prompt
+    }
+    // Inject feedback memory into the system prompt
+    return '$basePrompt\n\n$feedbackSummary';
+  }
+
   /// Build a short summary of user feedback within this conversation to guide future suggestions.
   String? _buildPreferenceSummary(Conversation conversation) {
     final assistantMsgs = conversation.messages.where((m) => m.role == MessageRole.assistant);
@@ -530,12 +542,6 @@ class ChatProvider extends ChangeNotifier {
     return buf.toString();
   }
 
-  String _buildEvaluationAssistantMarkdown(PromptEvaluation eval) {
-    // The evaluator already returns markdown in `explanation`, including
-    // bullet points. Forward it directly so bullets render exactly once.
-    return eval.explanation.trim();
-  }
-
   Future<void> _generateTitle(String content, Conversation conversation) async {
     try {
       // Use AI naming service for better titles
@@ -564,13 +570,17 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Build enhanced system prompt with feedback memory
+      final enhancedSystemPrompt = _buildEnhancedSystemPrompt(
+        basePrompt: systemPrompt ?? AppConfig.mainAssistantSystemPrompt,
+        conversation: conversation,
+      );
+
       // Stream response via repository
       final responseStream = _chatRepository.streamChat(
         history: conversation.messages,
         modelId: modelId,
-        // Always fall back to the global prompt-trainer persona so the
-        // assistant behaves as a conversation-aware prompt coach.
-        systemPrompt: systemPrompt ?? AppConfig.mainAssistantSystemPrompt,
+        systemPrompt: enhancedSystemPrompt,
       );
 
       // Create AI message and start streaming into it

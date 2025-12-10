@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
 
 /// Manages the current app locale (EN/FR) and notifies listeners on change.
 class LocaleProvider extends ChangeNotifier {

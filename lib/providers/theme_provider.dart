@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
 
 /// Manages theme state and user theme preferences.
 class ThemeProvider extends ChangeNotifier {

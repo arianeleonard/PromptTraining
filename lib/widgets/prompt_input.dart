@@ -129,9 +129,10 @@ class _PromptInputTextareaState extends State<PromptInputTextarea> {
           onChanged: widget.onChanged,
           onSubmitted: (_) => widget.onSubmit?.call(),
           decoration: InputDecoration(
-            hintText: widget.placeholder.isEmpty
-                ? AppLocalizations.of(context)!.inputPlaceholder
-                : widget.placeholder,
+            hintText:
+                widget.placeholder.isEmpty
+                    ? AppLocalizations.of(context).inputPlaceholder
+                    : widget.placeholder,
             hintStyle: TextStyle(
               color: Theme.of(
                 context,
@@ -236,22 +237,22 @@ class PromptInputSubmit extends StatelessWidget {
       case ChatStatus.idle:
         icon = Icons.send_rounded;
         onPressed = enabled ? onSubmit : null;
-        tooltip = AppLocalizations.of(context)!.sendMessage;
+        tooltip = AppLocalizations.of(context).sendMessage;
         break;
       case ChatStatus.submitting:
         icon = Icons.autorenew_rounded;
         onPressed = null;
-        tooltip = AppLocalizations.of(context)!.sending;
+        tooltip = AppLocalizations.of(context).sending;
         break;
       case ChatStatus.streaming:
         icon = Icons.stop_rounded;
         onPressed = onStop;
-        tooltip = AppLocalizations.of(context)!.stopGeneration;
+        tooltip = AppLocalizations.of(context).stopGeneration;
         break;
       case ChatStatus.error:
         icon = Icons.close_rounded;
         onPressed = onSubmit;
-        tooltip = AppLocalizations.of(context)!.retry;
+        tooltip = AppLocalizations.of(context).retry;
         break;
     }
 
@@ -266,7 +267,7 @@ class PromptInputSubmit extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-                 : Icon(icon, size: 20),
+                : Icon(icon, size: 20),
         style: IconButton.styleFrom(
           backgroundColor:
               onPressed != null
@@ -386,7 +387,7 @@ class _PromptInputModelSelectState extends State<PromptInputModelSelect> {
                     offset: offset,
                     child: GestureDetector(
                       onTap: () {}, // Prevent closing when clicking inside
-              child: Material(
+                      child: Material(
                         elevation: 8,
                         borderRadius: BorderRadius.circular(8),
                         color: Theme.of(context).colorScheme.surface,
@@ -416,7 +417,7 @@ class _PromptInputModelSelectState extends State<PromptInputModelSelect> {
                                         shrinkWrap: true,
                                         itemCount: widget.models.length,
                                         itemBuilder: (context, index) {
-              return _buildMenuItem(
+                                          return _buildMenuItem(
                                             widget.models[index],
                                           );
                                         },
@@ -484,7 +485,7 @@ class _PromptInputModelSelectState extends State<PromptInputModelSelect> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-               if (isSelected)
+              if (isSelected)
                 Icon(
                   Icons.check_rounded,
                   size: 16,
@@ -538,11 +539,11 @@ class _PromptInputModelSelectState extends State<PromptInputModelSelect> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                 AnimatedRotation(
+                AnimatedRotation(
                   turns: _isOpen ? 0.5 : 0,
                   duration: const Duration(milliseconds: 100),
                   child: Icon(
-                     Icons.expand_more_rounded,
+                    Icons.expand_more_rounded,
                     size: 16,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -688,6 +689,8 @@ class _PromptInputCompleteState extends State<PromptInputComplete> {
       widget.onSubmit?.call(text, _currentModel, ctx.isEmpty ? null : ctx);
       _controller.clear();
       _contextController.clear();
+      // Close keyboard
+      _promptFocusNode.unfocus();
       // Clear provider draft to avoid re-injection overriding user typing
       try {
         final chat = Provider.of<ChatProvider>(context, listen: false);
@@ -727,125 +730,152 @@ class _PromptInputCompleteState extends State<PromptInputComplete> {
         }
 
         return PromptInput(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          PromptInputTextarea(
-            controller: _controller,
-              focusNode: _promptFocusNode,
-            placeholder: widget.placeholder,
-            minHeight: widget.minHeight,
-            maxHeight: widget.maxHeight,
-            onChanged: (_) => setState(() {}),
-            onSubmit: _handleSubmit,
-          ),
-          if (_showContext)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.only(left: 8, right: 8, top: 6),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 12, top: 10, right: 12),
-                      child: Row(
-                        children: [
-                           Icon(
-                             Icons.description_outlined,
-                            size: 16,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PromptInputTextarea(
+                controller: _controller,
+                focusNode: _promptFocusNode,
+                placeholder: widget.placeholder,
+                minHeight: widget.minHeight,
+                maxHeight: widget.maxHeight,
+                onChanged: (_) => setState(() {}),
+                onSubmit: _handleSubmit,
+              ),
+              if (_showContext)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(left: 8, right: 8, top: 6),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 12,
+                            top: 10,
+                            right: 12,
                           ),
-                          const SizedBox(width: 8),
-                           Text(
-                            AppLocalizations.of(context)!.contextOptional,
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.description_outlined,
+                                size: 16,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                AppLocalizations.of(context).contextOptional,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.labelMedium?.copyWith(
+                                  color:
+                                      Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.w600,
                                 ),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                tooltip:
+                                    AppLocalizations.of(context).hideContext,
+                                onPressed: () {
+                                  setState(() => _showContext = false);
+                                },
+                                icon: Icon(
+                                  Icons.close_rounded,
+                                  size: 16,
+                                  color:
+                                      Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                ),
+                                style: IconButton.styleFrom(
+                                  splashFactory: NoSplash.splashFactory,
+                                  padding: const EdgeInsets.all(6),
+                                  minimumSize: const Size(30, 30),
+                                ),
+                              ),
+                            ],
                           ),
-                          const Spacer(),
-                           IconButton(
-                             tooltip: AppLocalizations.of(context)!.hideContext,
-                            onPressed: () {
-                              setState(() => _showContext = false);
-                            },
-                            icon: Icon(
-                               Icons.close_rounded,
-                              size: 16,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
-                            style: IconButton.styleFrom(
-                              splashFactory: NoSplash.splashFactory,
-                              padding: const EdgeInsets.all(6),
-                              minimumSize: const Size(30, 30),
-                            ),
-                          )
-                        ],
-                      ),
+                        ),
+                        PromptInputTextarea(
+                          controller: _contextController,
+                          placeholder:
+                              AppLocalizations.of(context).contextPlaceholder,
+                          minHeight: 40,
+                          maxHeight: 120,
+                          onChanged: (_) => setState(() {}),
+                          onSubmit: _handleSubmit,
+                        ),
+                      ],
                     ),
-                    PromptInputTextarea(
-                      controller: _contextController,
-                      placeholder: AppLocalizations.of(context)!.contextPlaceholder,
-                      minHeight: 40,
-                      maxHeight: 120,
-                      onChanged: (_) => setState(() {}),
+                  ),
+                ),
+              PromptInputToolbar(
+                child: Row(
+                  children: [
+                    PromptInputTools(
+                      children: [
+                        PromptInputButton(
+                          tooltip: AppLocalizations.of(context).addAttachment,
+                          onPressed: widget.onAddAttachment,
+                          child: const Icon(
+                            Icons.attach_file_rounded,
+                            size: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        PromptInputButton(
+                          tooltip:
+                              _showContext
+                                  ? AppLocalizations.of(
+                                    context,
+                                  ).hideContextNotes
+                                  : AppLocalizations.of(
+                                    context,
+                                  ).addContextNotes,
+                          onPressed: () {
+                            setState(() => _showContext = !_showContext);
+                          },
+                          child: Icon(
+                            _showContext
+                                ? Icons.sticky_note_2_outlined
+                                : Icons.description_outlined,
+                            size: 16,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        PromptInputModelSelect(
+                          value: _currentModel,
+                          models: widget.models ?? AppConfig.availableModels,
+                          onChanged: widget.onModelChanged,
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    PromptInputSubmit(
+                      status: widget.status,
+                      enabled: _controller.text.trim().isNotEmpty,
                       onSubmit: _handleSubmit,
+                      onStop: widget.onStop,
                     ),
                   ],
                 ),
               ),
-            ),
-          PromptInputToolbar(
-            child: Row(
-              children: [
-                PromptInputTools(
-                  children: [
-                    PromptInputButton(
-                      tooltip: AppLocalizations.of(context)!.addAttachment,
-                      onPressed: widget.onAddAttachment,
-                      child: const Icon(Icons.attach_file_rounded, size: 16),
-                    ),
-                    const SizedBox(width: 6),
-                    PromptInputButton(
-                      tooltip: _showContext
-                          ? AppLocalizations.of(context)!.hideContextNotes
-                          : AppLocalizations.of(context)!.addContextNotes,
-                      onPressed: () {
-                        setState(() => _showContext = !_showContext);
-                      },
-                      child: Icon(
-                        _showContext ? Icons.sticky_note_2_outlined : Icons.description_outlined,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    PromptInputModelSelect(
-                      value: _currentModel,
-                      models: widget.models ?? AppConfig.availableModels,
-                      onChanged: widget.onModelChanged,
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                PromptInputSubmit(
-                  status: widget.status,
-                  enabled: _controller.text.trim().isNotEmpty,
-                  onSubmit: _handleSubmit,
-                  onStop: widget.onStop,
-                ),
-              ],
-            ),
+            ],
           ),
-        ],
-      ),
         );
       },
     );

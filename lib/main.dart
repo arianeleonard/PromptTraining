@@ -39,7 +39,7 @@ void main() {
   runZonedGuarded(() {
     runApp(const AiChatApp());
   }, (Object error, StackTrace stack) {
-    debugPrint('Uncaught zone error: ' + error.toString());
+    debugPrint('Uncaught zone error: $error');
     debugPrint(stack.toString());
   });
 }

@@ -82,7 +82,7 @@ class _ResponseActionsState extends State<ResponseActions> {
       children: [
         _ActionButton(
           icon: Icons.refresh_rounded,
-          tooltip: AppLocalizations.of(context)!.regenerate,
+          tooltip: AppLocalizations.of(context).regenerate,
           onPressed: () {
             // TODO: Implement regenerate functionality
           },
@@ -90,7 +90,7 @@ class _ResponseActionsState extends State<ResponseActions> {
         const SizedBox(width: 4),
         _ActionButton(
           icon: Icons.thumb_up_outlined,
-          tooltip: AppLocalizations.of(context)!.goodResponse,
+          tooltip: AppLocalizations.of(context).goodResponse,
           onPressed: () {
             setState(() {
               // Toggle thumbs up
@@ -112,7 +112,7 @@ class _ResponseActionsState extends State<ResponseActions> {
         const SizedBox(width: 4),
         _ActionButton(
           icon: Icons.thumb_down_outlined,
-          tooltip: AppLocalizations.of(context)!.poorResponse,
+          tooltip: AppLocalizations.of(context).poorResponse,
           onPressed: () async {
             // Toggle-like behavior: if already pressed (red), unselect and skip popup
             if (_thumbsDownPressed) {
@@ -144,12 +144,12 @@ class _ResponseActionsState extends State<ResponseActions> {
                   builder: (context, setState) {
                     final canSubmit = localSelection != null;
                     return AlertDialog(
-                      title: Text(AppLocalizations.of(context)!.dislikeDialogTitle),
+                      title: Text(AppLocalizations.of(context).dislikeDialogTitle),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           RadioListTile<_FeedbackOption>(
-                            title: Text(AppLocalizations.of(context)!.feedbackTooVague),
+                            title: Text(AppLocalizations.of(context).feedbackTooVague),
                             value: _FeedbackOption.vague,
                             groupValue: localSelection,
                             onChanged: (value) {
@@ -157,7 +157,7 @@ class _ResponseActionsState extends State<ResponseActions> {
                             },
                           ),
                           RadioListTile<_FeedbackOption>(
-                            title: Text(AppLocalizations.of(context)!.feedbackIncorrect),
+                            title: Text(AppLocalizations.of(context).feedbackIncorrect),
                             value: _FeedbackOption.incorrect,
                             groupValue: localSelection,
                             onChanged: (value) {
@@ -165,7 +165,7 @@ class _ResponseActionsState extends State<ResponseActions> {
                             },
                           ),
                           RadioListTile<_FeedbackOption>(
-                            title: Text(AppLocalizations.of(context)!.feedbackOther),
+                            title: Text(AppLocalizations.of(context).feedbackOther),
                             value: _FeedbackOption.other,
                             groupValue: localSelection,
                             onChanged: (value) {
@@ -176,8 +176,8 @@ class _ResponseActionsState extends State<ResponseActions> {
                           TextField(
                             controller: _otherController,
                             decoration: InputDecoration(
-                              labelText: AppLocalizations.of(context)!.feedbackNotesLabel,
-                              hintText: AppLocalizations.of(context)!.feedbackNotesHint,
+                              labelText: AppLocalizations.of(context).feedbackNotesLabel,
+                              hintText: AppLocalizations.of(context).feedbackNotesHint,
                             ),
                             maxLines: 3,
                           ),
@@ -186,7 +186,7 @@ class _ResponseActionsState extends State<ResponseActions> {
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(null),
-                          child: Text(AppLocalizations.of(context)!.cancel),
+                          child: Text(AppLocalizations.of(context).cancel),
                         ),
                         ElevatedButton(
                           onPressed: canSubmit
@@ -201,7 +201,7 @@ class _ResponseActionsState extends State<ResponseActions> {
                                   );
                                 }
                               : null,
-                          child: Text(AppLocalizations.of(context)!.submit),
+                          child: Text(AppLocalizations.of(context).submit),
                         ),
                       ],
                     );
@@ -234,20 +234,20 @@ class _ResponseActionsState extends State<ResponseActions> {
         if (widget.onUseAsNewPrompt != null) ...[
           _ActionButton(
             icon: Icons.edit_outlined,
-            tooltip: AppLocalizations.of(context)!.editPrompt,
+            tooltip: AppLocalizations.of(context).editPrompt,
             onPressed: widget.onUseAsNewPrompt,
           ),
           const SizedBox(width: 4),
         ],
         _ActionButton(
           icon: _copied ? Icons.check_rounded : Icons.content_copy_rounded,
-          tooltip: _copied ? AppLocalizations.of(context)!.copied : AppLocalizations.of(context)!.copy,
+          tooltip: _copied ? AppLocalizations.of(context).copied : AppLocalizations.of(context).copy,
           onPressed: _handleCopy,
         ),
         const SizedBox(width: 4),
         _ActionButton(
           icon: Icons.share_outlined,
-          tooltip: AppLocalizations.of(context)!.share,
+          tooltip: AppLocalizations.of(context).share,
           onPressed: widget.onShare,
         ),
       ],

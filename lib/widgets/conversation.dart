@@ -15,6 +15,7 @@ class ConversationView extends StatefulWidget {
 class _ConversationViewState extends State<ConversationView> {
   final ScrollController _scrollController = ScrollController();
   bool _showScrollToBottom = false;
+  int _previousMessageCount = 0;
 
   @override
   void initState() {
@@ -55,11 +56,14 @@ class _ConversationViewState extends State<ConversationView> {
         final messages = chatProvider.messages;
 
         // Auto-scroll to bottom when new messages arrive
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollController.hasClients) {
-            _scrollToBottom();
-          }
-        });
+        if (messages.length != _previousMessageCount) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_scrollController.hasClients) {
+              _scrollToBottom();
+            }
+          });
+          _previousMessageCount = messages.length;
+        }
 
         if (messages.isEmpty) {
           return Center(
@@ -67,10 +71,12 @@ class _ConversationViewState extends State<ConversationView> {
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Text(
                 // Localized empty state text
-                AppLocalizations.of(context)!.noMessagesStart,
+                AppLocalizations.of(context).noMessagesStart,
                 textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           );

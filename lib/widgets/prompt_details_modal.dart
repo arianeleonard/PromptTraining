@@ -54,7 +54,7 @@ class PromptDetailsModal extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                AppLocalizations.of(context)!.promptReview,
+                AppLocalizations.of(context).promptReview,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
@@ -76,8 +76,8 @@ class PromptDetailsModal extends StatelessWidget {
                 ),
               ),
               tooltip: entry.isFavorite
-                  ? AppLocalizations.of(context)!.removeFromFavorites
-                  : AppLocalizations.of(context)!.addToFavorites,
+                  ? AppLocalizations.of(context).removeFromFavorites
+                  : AppLocalizations.of(context).addToFavorites,
               style: IconButton.styleFrom(
                 splashFactory: NoSplash.splashFactory,
                 padding: const EdgeInsets.all(6),
@@ -104,19 +104,19 @@ class PromptDetailsModal extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 )),
         const SizedBox(height: 16),
-        Text(AppLocalizations.of(context)!.prompt,
+        Text(AppLocalizations.of(context).prompt,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
         Text(entry.prompt, style: Theme.of(context).textTheme.bodyMedium),
         if ((entry.context ?? '').isNotEmpty) ...[
           const SizedBox(height: 16),
-          Text(AppLocalizations.of(context)!.contextOptional,
+          Text(AppLocalizations.of(context).contextOptional,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           Text(entry.context!, style: Theme.of(context).textTheme.bodyMedium),
         ],
         const SizedBox(height: 16),
-        Text(AppLocalizations.of(context)!.aiFeedback,
+        Text(AppLocalizations.of(context).aiFeedback,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
         Text(entry.feedback, style: Theme.of(context).textTheme.bodyMedium),
@@ -161,7 +161,7 @@ class PromptDetailsModal extends StatelessWidget {
   String _localizedRoleLabel(BuildContext context, String stored) {
     final parsed = UserRoleUtils.tryParse(stored);
     if (parsed != null) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       switch (parsed) {
         case UserRole.designer:
           return l10n.roleDesigner;

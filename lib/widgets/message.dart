@@ -107,7 +107,7 @@ class MessageView extends StatelessWidget {
             children: [
               // Assistant label
               Text(
-                AppLocalizations.of(context)!.assistantLabel,
+                AppLocalizations.of(context).assistantLabel,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: Theme.of(
@@ -121,7 +121,7 @@ class MessageView extends StatelessWidget {
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 600),
                   child: PromptQualityCard(
-                    evaluation: prev!.evaluation!,
+                    evaluation: prev.evaluation!,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -213,7 +213,7 @@ class MessageView extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            AppLocalizations.of(context)!.thinking,
+            AppLocalizations.of(context).thinking,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -233,7 +233,7 @@ class MessageView extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Text(
-          AppLocalizations.of(context)!.generating,
+          AppLocalizations.of(context).generating,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: Theme.of(
               context,

@@ -19,7 +19,6 @@ class RoleLabel {
       case UserRole.finance:
         return l10n.roleFinance;
       case UserRole.strategist:
-      default:
         return l10n.roleStrategist;
     }
   }

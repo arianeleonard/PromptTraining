@@ -27,7 +27,7 @@ class ChatHeaderTitle extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 800),
           child: Text(
             conversation.title.isEmpty
-                ? AppLocalizations.of(context)!.newChat
+                ? AppLocalizations.of(context).newChat
                 : conversation.title,
             textAlign: TextAlign.center,
             maxLines: 2,

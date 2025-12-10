@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../l10n/app_localizations.dart';
-import '../models/user_role.dart';
-import '../providers/chat_provider.dart';
-import '../providers/locale_provider.dart';
-import '../providers/theme_provider.dart';
 
 class ChatAppBar extends StatelessWidget {
   final VoidCallback? onToggleSidebar;
@@ -43,7 +37,7 @@ class ChatAppBar extends StatelessWidget {
                 size: 18,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
-              tooltip: AppLocalizations.of(context)!.openSidebar,
+              tooltip: AppLocalizations.of(context).openSidebar,
               style: IconButton.styleFrom(
                 splashFactory: NoSplash.splashFactory,
                 backgroundColor: Colors.transparent,

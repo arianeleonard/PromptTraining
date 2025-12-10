@@ -94,7 +94,7 @@ class _CodeBlockState extends State<CodeBlock> {
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               onPressed: _handleCopy,
-              tooltip: _copied ? AppLocalizations.of(context)!.copied : AppLocalizations.of(context)!.copy,
+              tooltip: _copied ? AppLocalizations.of(context).copied : AppLocalizations.of(context).copy,
               style: IconButton.styleFrom(
                 foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
               ),

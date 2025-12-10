@@ -176,7 +176,7 @@ class PromptEvaluatorService {
 
     return PromptEvaluation(
       score: score,
-      explanation: 'Heuristic score based on structure and specificity.\n- ' + reasons.join('\n- '),
+      explanation: 'Heuristic score based on structure and specificity.\n- ${reasons.join('\n- ')}',
     );
   }
 }
