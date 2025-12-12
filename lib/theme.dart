@@ -46,7 +46,7 @@ class DarkColors {
   static const muted = Color(0xFFAED7FF);
   static const mutedForeground = Color(0xFFAED7FF);
   static const accent = Color(0xFF89C5FF);
-  static const accentForeground = Color(0xFFFFFFFF);
+  static const accentForeground = Color(0xFF121821);
   static const destructive = Color(0xFFD93B27);
   static const destructiveForeground = Color(0xFFFDEFED);
   static const border = Color(0x66AED7FF);

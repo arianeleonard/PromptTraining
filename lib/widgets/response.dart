@@ -28,10 +28,10 @@ class Response extends StatelessWidget {
         ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
         code: GoogleFonts.jetBrainsMono(
           fontSize: 13,
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.onPrimaryContainer,
           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         ),
-        codeblockDecoration: const BoxDecoration(),
+        codeblockDecoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
         codeblockPadding: EdgeInsets.zero,
         blockquote: Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontStyle: FontStyle.italic,

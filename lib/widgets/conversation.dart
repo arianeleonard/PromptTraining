@@ -19,6 +19,7 @@ class _ConversationViewState extends State<ConversationView> {
   bool _autoScrollEnabled = true;
   bool _userIsScrolling = false;
   bool _initialScrollDone = false;
+  double? _lastViewportDimension;
 
   @override
   void dispose() {
@@ -32,8 +33,12 @@ class _ConversationViewState extends State<ConversationView> {
         notification.metrics.maxScrollExtent - 32;
 
     if (_showScrollToBottom == isAtBottom) {
-      setState(() {
-        _showScrollToBottom = !isAtBottom;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _showScrollToBottom == isAtBottom) {
+          setState(() {
+            _showScrollToBottom = !isAtBottom;
+          });
+        }
       });
     }
 
@@ -50,11 +55,22 @@ class _ConversationViewState extends State<ConversationView> {
         _autoScrollEnabled = true;
       }
     } else if (notification is ScrollMetricsNotification) {
+      final metrics = notification.metrics;
+      // Check if viewport changed (e.g. keyboard open/close)
+      final viewportChanged = _lastViewportDimension != null &&
+          (metrics.viewportDimension - _lastViewportDimension!).abs() > 1.0;
+      _lastViewportDimension = metrics.viewportDimension;
+
       if (_autoScrollEnabled && !_userIsScrolling && _scrollController.hasClients) {
          Future.microtask(() {
            if (_scrollController.hasClients) {
              final isStreaming = Provider.of<ChatProvider>(context, listen: false).status == ChatStatus.streaming;
-             _scrollToBottom(animated: !isStreaming);
+             
+             // Jump if streaming (to avoid lag) or if viewport changed (to keep sticky bottom)
+             // Animate only for normal new messages
+             final shouldAnimate = !isStreaming && !viewportChanged;
+             
+             _scrollToBottom(animated: shouldAnimate);
            }
          });
       }
