@@ -121,26 +121,3 @@ Database: Users, prompts, feedback, scores, tags, templates, and iteration histo
 
 AI Layer: Responsible for evaluating prompts, generating suggestions, scoring quality, and providing explanations.
 
-8. Naming Conventions & Standards
-
-Descriptive, consistent naming for prompts, templates, and tags.
-
-Version control for prompt iterations.
-
-Use camelCase for code, Title Case for UI labels.
-
-9. Rules for AI Chat
-
-Always reference this Architecture.md when generating app features or UI elements.
-
-Focus on prompt improvement and actionable feedback.
-
-Suggest one improvement at a time in a clear, understandable way.
-
-Tailor feedback to user role, language, and context.
-
-Use structured responses wherever possible to integrate easily with the app.
-
-Always use Theme colors and styles.
-
-Always localize labels.
